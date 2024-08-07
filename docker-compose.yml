@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  server:
+    restart: always
+    command: yarn start
+    build: .
+    ports:
+      - 8000:8000
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: uninter
+      POSTGRES_USER: uninter
+      POSTGRES_DB: uninter
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d uninter -U uninter"]
+      interval: 10s
+      retries: 10
+      start_period: 30s
+      timeout: 10s
